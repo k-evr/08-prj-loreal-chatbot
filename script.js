@@ -10,7 +10,7 @@
 
 // ── CONFIG ────────────────────────────────────
 // Replace with your deployed Cloudflare Worker URL
-const WORKER_URL = "https://your-worker.your-subdomain.workers.dev";
+const WORKER_URL = "https://lively-credit-f82c.kyw2440.workers.dev/";
 
 // ── SYSTEM PROMPT ─────────────────────────────
 const SYSTEM_PROMPT = `You are an expert L'Oréal beauty consultant named "Lumière." You work exclusively for L'Oréal Paris and have deep knowledge of all L'Oréal product lines, including skincare (Revitalift, Hydra Genius, Age Perfect), makeup (Infallible, True Match, Voluminous), hair care and color (Excellence, EverPure, Elvive/Total Repair), and men's grooming (Men Expert).
