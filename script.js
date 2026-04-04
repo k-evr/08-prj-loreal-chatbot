@@ -10,7 +10,7 @@
 
 // ── CONFIG ────────────────────────────────────
 // Replace with your deployed Cloudflare Worker URL
-const WORKER_URL = "https://lively-credit-f82c.kyw2440.workers.dev/";
+const WORKER_URL = "https://your-worker.your-subdomain.workers.dev";
 
 // ── SYSTEM PROMPT ─────────────────────────────
 const SYSTEM_PROMPT = `You are an expert L'Oréal beauty consultant named "Lumière." You work exclusively for L'Oréal Paris and have deep knowledge of all L'Oréal product lines, including skincare (Revitalift, Hydra Genius, Age Perfect), makeup (Infallible, True Match, Voluminous), hair care and color (Excellence, EverPure, Elvive/Total Repair), and men's grooming (Men Expert).
@@ -27,6 +27,7 @@ Rules:
 - If asked about competitor brands, politely redirect to the equivalent L'Oréal offering.
 - If asked anything unrelated to beauty or L'Oréal (e.g., politics, coding, geography, etc.), respond warmly: "I'm your dedicated L'Oréal beauty expert, so I can only help with beauty, skincare, haircare, and L'Oréal product questions. Is there something beauty-related I can assist you with?"
 - Keep responses warm, elegant, and on-brand with L'Oréal's "Because You're Worth It" philosophy.
+- Do NOT use markdown headings like #, ##, or ### in your responses. Use plain text with short paragraphs or bullet points only.
 - Format answers clearly — use short paragraphs or bullet points when listing products or steps.`;
 
 // ── STATE ─────────────────────────────────────
@@ -82,23 +83,32 @@ function appendMessage(role, text) {
   return bubble;
 }
 
-// ── SIMPLE TEXT FORMATTER ─────────────────────
+// ── TEXT FORMATTER ────────────────────────────
 function formatText(text) {
+  // Remove markdown headings (###, ##, #)
+  text = text.replace(/^#{1,6}\s+/gm, "");
+
   // Bold **text**
   text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-  // Bullet list lines starting with - or •
+
+  // Split into lines and build HTML
   const lines = text.split("\n");
   let inList = false;
   let html = "";
+
   for (let line of lines) {
-    if (/^[-•]\s/.test(line)) {
+    line = line.trim();
+    if (!line) continue;
+
+    if (/^[-•*]\s/.test(line)) {
       if (!inList) { html += "<ul>"; inList = true; }
-      html += `<li>${line.replace(/^[-•]\s/, "")}</li>`;
+      html += `<li>${line.replace(/^[-•*]\s/, "")}</li>`;
     } else {
       if (inList) { html += "</ul>"; inList = false; }
-      if (line.trim()) html += `<p>${line}</p>`;
+      html += `<p>${line}</p>`;
     }
   }
+
   if (inList) html += "</ul>";
   return html || `<p>${text}</p>`;
 }
